@@ -27,13 +27,17 @@ console.log(name);
 // var는 block scope가 없다
 // 즉 호출할 수 없는함수를 호출하게 되버려 꼬이는경우가 생길 수 있음
 
-// 3. constant = 값을할당하면 바뀌지않는것 (const)
+// 3. constant = 값을할당하면 바뀌지않는것 (const / read only)
 // 쓰는 이유
 // (1) 보안때문에
 // (2) 스레드 안정성
 // (3) 코드 변경시 편함
 
-// 4. Variable types
+// 데이터타입 (Mutable data, Immutable data 2가지)
+// Immutable data = 데이터 자체를 절대 변경하지 못하는것
+// Mutable data = 변경이 가능한 데이터 타입
+
+// 4. Variable types (read / write)
 // number, bigint, string, boolean
 
 // number
@@ -123,3 +127,5 @@ console.log(`value: ${text}, type: ${typeof text}`); // 4 , number
 // 다이나믹 타이핑은 자동변환으로 인해 나중에 변수값을 바꾸고
 // console.log(text.charAt(0)); 같이 특정 문자를 출력하려고 할때
 // 에러가 발생할 수 있으니 조심해야한다.
+
+// 드림코딩 3회차
