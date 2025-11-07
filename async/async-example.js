@@ -107,28 +107,29 @@
 // 그 외의 숫자가 들어오면
 // 1.5초 후 reject(new Error("유효하지 않은 사용자입니다."))
 // 를 반환해야 한다.
-function fetchUserData(userId) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            // 아래 코드를 작성하시오.
-            // 원래 코드: if(userId === 1 || userId === 2 || userId...) 이런식
-            // includes 는 숫자뿐만 아니라 ["안녕", "하세요"].includes(userId) 처럼
-            // 여러개의 문자열, bool 등 모든타입을 비교할 수 있다.
-            if ([1, 2, 3, 4, 5].includes(userId)) {
-                resolve(`id: ${userId}, name: 'User${userId}'`);
-            } else {
-                reject(new Error("유효하지 않은 사용자 입니다."));
-            }
-        }, 1500);
-    });
-}
 
-// 실행 예시
-fetchUserData(3)
-    .then((user) => console.log("✅ 사용자 정보:", user))
-    .catch((err) => console.log("❌ 오류:", err.message));
+// function fetchUserData(userId) {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             // 아래 코드를 작성하시오.
+//             // 원래 코드: if(userId === 1 || userId === 2 || userId...) 이런식
+//             // includes 는 숫자뿐만 아니라 ["안녕", "하세요"].includes(userId) 처럼
+//             // 여러개의 문자열, bool 등 모든타입을 비교할 수 있다.
+//             if ([1, 2, 3, 4, 5].includes(userId)) {
+//                 resolve(`id: ${userId}, name: 'User${userId}'`);
+//             } else {
+//                 reject(new Error("유효하지 않은 사용자 입니다."));
+//             }
+//         }, 1500);
+//     });
+// }
 
-fetchUserData();
+// // 실행 예시
+// fetchUserData(3)
+//     .then((user) => console.log("✅ 사용자 정보:", user))
+//     .catch((err) => console.log("❌ 오류:", err.message));
+
+// fetchUserData();
 
 // 몰랐던것: prompt 는 항상 문자열로 반환된다.
 // 그래서 내가 3값을 입력으로 받고싶으면
@@ -139,3 +140,69 @@ fetchUserData();
 // includes 대소문자 구분없이 사용하고 싶을때는
 // if(["안녕","하세요"].map(x => x.toLowerCase()).includes(userId.toLowerCase()))
 // 이런식으로도 가능하다.
+
+// 문제4.
+// 영화 티켓 예매 시뮬레이터
+
+// 🎬 당신은 온라인 영화관 시스템을 만들고 있습니다.
+// 사용자가 영화 티켓을 예매하면:
+// 좌석을 확인하고,
+// 결제 진행 후,
+// 성공하면 "🎟️ 예매 완료! 영화 즐감하세요!" 문구를 출력합니다.
+// 단, 좌석이 없거나 결제가 실패할 수 있습니다.
+// 아래 조건에 맞게 async / await 문법을 사용해서 작성하세요.
+
+// 🎯 요구사항
+// 1️⃣ checkSeat()
+// 1초 후 좌석이 있는지 확인합니다.
+// 랜덤으로 50% 확률로 성공(resolve("✅ 좌석 확인 완료")) 또는 실패(reject(new Error("❌ 좌석이 모두 찼습니다."))).
+
+// 2️⃣ processPayment()
+// 1.5초 후 결제 진행합니다.
+// 랜덤으로 70% 확률로 성공(resolve("💳 결제 성공")) 또는 실패(reject(new Error("💥 결제 실패"))).
+
+// 3️⃣ main()
+// 위 두 함수를 순서대로 실행하고,
+// 성공 시 "🎟️ 예매 완료! 영화 즐감하세요!" 출력
+// 실패 시 에러 메시지를 출력하세요.
+
+// async function checkSeat() {
+//     console.log("좌석 확인중...");
+//     const seat = await new Promise((resolve, reject) =>
+//         setTimeout(() => {
+//             const success = Math.random() > 0.5;
+//             if (success) {
+//                 resolve("✅ 좌석 확인 완료");
+//             } else {
+//                 reject(new Error("❌ 좌석이 모두 찼습니다."));
+//             }
+//         }, 1000))
+//     return seat;
+// }
+
+// async function processPayment() {
+//     console.log("결제 진행중...");
+//     const payment = await new Promise((resolve, reject) =>
+//         setTimeout(() => {
+//             const success = Math.random() > 0.3;
+//             if (success) {
+//                 resolve("💳 결제 성공");
+//             } else {
+//                 reject(new Error("💥 결제 실패"));
+//             }
+//         }, 1500))
+//     return payment;
+// }
+
+// async function main() {
+//     try {
+//         const check = await checkSeat();
+//         console.log(check);
+//         const process = await processPayment(check);
+//         console.log(process);
+//         console.log("🎟️ 예매 완료! 영화 즐감하세요!");
+//     } catch (error) {
+//         console.log(error.message);
+//     }
+// }
+// main();
