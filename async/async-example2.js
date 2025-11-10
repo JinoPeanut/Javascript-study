@@ -274,31 +274,146 @@
 // 가장 먼저 응답한 서버의 결과만 출력한다.
 // 실패한 경우에는 "❌ 모든 서버에서 오류 발생" 이라고 출력한다.
 
-async function randomServer(serverName, failRate, time) {
-    const server = await new Promise((resolve, reject) => setTimeout(() => {
+// async function randomServer(serverName, failRate, time) {
+//     const server = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > failRate;
+//         if (success) {
+//             resolve(`✅ ${serverName} 서버 응답 성공 (${(time / 1000).toFixed(1)})초`);
+//             // 몇초가 걸렸는지 표시하는 방식으로 .toFixed 를 사용했다.
+//             // 괄호 안에 1은 소숫점 1자리까지 표시한다는 뜻이며
+//             // 0으로 하면 소숫점없이 보여준다.
+//         } else {
+//             reject(new Error(`${serverName} 서버 응답 실패`));
+//         }
+//     }, time));
+//     return server;
+// }
+
+// async function main() {
+//     try {
+//         const results = await Promise.race([
+//             randomServer("A", 0.2, 1000),
+//             randomServer("B", 0.2, 1300),
+//             randomServer("C", 0.2, 1600),
+//         ]);
+//         console.log(results);
+//     } catch (error) {
+//         console.log("❌ 모든 서버에서 오류 발생");
+//     }
+// }
+// main();
+
+// 문제
+
+// 다음 코드를 완성하시오.
+// 세 개의 Promise 함수 (taskA, taskB, taskC)가 각각 1초, 2초, 3초 뒤에 성공(resolve)되도록 만들고,
+
+// Promise.all과 Promise.race를 각각 이용해 어떤 차이가 있는지 출력하는 프로그램을 만들어라.
+
+// function taskA() {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             resolve("✅ A 완료");
+//         }, 1000);
+//     });
+// }
+
+// function taskB() {
+//     return new Promise((resolve) => setTimeout(() => {
+//         resolve("✅ B 완료");
+//     }, 2000));
+// }
+
+// function taskC() {
+//     return new Promise((resolve) => setTimeout(() => {
+//         resolve("✅ C 완료");
+//     }, 3000))
+// }
+
+// async function runAllTasks() {
+//     console.log("=== Promise.all 시작 ===");
+//     const allResult = await Promise.all([taskA(), taskB(), taskC()]);
+//     console.log(allResult);
+
+//     console.log("=== Promise.race 시작 ===");
+//     const raceResult = await Promise.race([taskA(), taskB(), taskC()]);
+//     console.log(raceResult);
+// }
+
+// runAllTasks();
+
+function fakeServer(name, failRate, time) {
+    return new Promise((resolve, reject) => setTimeout(() => {
         const success = Math.random() > failRate;
         if (success) {
-            resolve(`✅ ${serverName} 서버 응답 성공 (${(time / 1000).toFixed(1)})초`);
-            // 몇초가 걸렸는지 표시하는 방식으로 .toFixed 를 사용했다.
-            // 괄호 안에 1은 소숫점 1자리까지 표시한다는 뜻이며
-            // 0으로 하면 소숫점없이 보여준다.
+            resolve(`✅ 서버 ${name} 응답 성공 (${time / 1000}초)`);
         } else {
-            reject(new Error(`${serverName} 서버 응답 실패`));
+            reject(new Error(`❌ 서버 ${name} 응답 실패 (${time / 1000}초)`));
         }
     }, time));
-    return server;
 }
 
+// async function testAll() {
+//     try {
+//         const result = await Promise.all([
+//             fakeServer("A", 0.2, 1000),
+//             fakeServer("B", 0.5, 1500),
+//             fakeServer("C", 0.2, 2000)
+//         ]);
+//         console.log("✅ 모든 서버 성공:", result);
+//     } catch (error) {
+//         console.log("💥 하나라도 실패하면 전체 실패:", error.message);
+//     }
+// }
+
+// async function testRace() {
+//     try {
+//         const result = await Promise.race([
+//             fakeServer("A", 0.7, 1000),
+//             fakeServer("B", 0.5, 1500),
+//             fakeServer("C", 0.2, 2000)
+//         ]);
+//         console.log("🏁 가장 먼저 응답한 서버:", result);
+//     } catch (error) {
+//         console.log("💥 가장 먼저 실패한 서버:", error.message);
+//     }
+// }
+
+// testRace();
+
+// 요구사항
+
+// getUserData(failRate, time) 함수를 작성하시오.
+// 랜덤으로 성공/실패하도록 하며,
+// 성공 시: "👤 유저 데이터 불러오기 성공"
+// 실패 시: "🚨 유저 데이터 불러오기 실패"
+// 이 함수를 이용해 아래 두 가지 버전을 각각 작성하시오: try-catch, then-catch
+
+async function getUserData(failRate, time) {
+    const getuser = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > failRate;
+
+        if (success) {
+            resolve("👤 유저 데이터 불러오기 성공");
+        } else {
+            reject(new Error("🚨 유저 데이터 불러오기 실패"));
+        }
+    }, time));
+    return getuser;
+}
+
+// try-catch 버전
 async function main() {
     try {
-        const results = await Promise.race([
-            randomServer("A", 0.2, 1000),
-            randomServer("B", 0.2, 1300),
-            randomServer("C", 0.2, 1600),
-        ]);
-        console.log(results);
+        const user = await getUserData(0.2, 1500);
+        console.log("유저 데이터 불러오기 성공");
     } catch (error) {
-        console.log("❌ 모든 서버에서 오류 발생");
+        console.log("유저 데이터 불러오기 실패", error.message);
     }
 }
-main();
+
+// then-catch 버전
+getUserData(0.2, 1500)
+    .then(msg => console.log(msg))
+    .then(console.log("유저 데이터 불러오기 성공"))
+    .catch((error) => console.log("유저데이터 불러오기 실패", error.message))
