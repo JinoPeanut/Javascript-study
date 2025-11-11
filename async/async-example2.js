@@ -389,31 +389,301 @@ function fakeServer(name, failRate, time) {
 // 실패 시: "🚨 유저 데이터 불러오기 실패"
 // 이 함수를 이용해 아래 두 가지 버전을 각각 작성하시오: try-catch, then-catch
 
-async function getUserData(failRate, time) {
-    const getuser = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > failRate;
+// async function getUserData(failRate, time) {
+//     const getuser = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > failRate;
 
+//         if (success) {
+//             resolve("👤 유저 데이터 불러오기 성공");
+//         } else {
+//             reject(new Error("🚨 유저 데이터 불러오기 실패"));
+//         }
+//     }, time));
+//     return getuser;
+// }
+
+// // try-catch 버전
+// async function main() {
+//     try {
+//         const user = await getUserData(0.2, 1500);
+//         console.log("유저 데이터 불러오기 성공");
+//     } catch (error) {
+//         console.log("유저 데이터 불러오기 실패", error.message);
+//     }
+// }
+
+// // then-catch 버전
+// getUserData(0.2, 1500)
+//     .then(msg => console.log(msg))
+//     .then(console.log("유저 데이터 불러오기 성공"))
+//     .catch((error) => console.log("유저데이터 불러오기 실패", error.message))
+
+// 문제: “데이터 처리 파이프라인 만들기”
+
+// 어떤 프로그램이 아래 3단계를 수행해야 한다고 하자.
+// 각 단계는 비동기 작업(Promise) 으로 작동한다.
+
+// 1️⃣ 데이터 로드 (loadData)
+// 1.5초 후에 "📦 데이터 로드 완료"를 resolve
+// 단, Math.random() < 0.2면 실패 (reject(new Error("데이터 로드 실패")))
+
+// 2️⃣ 데이터 처리 (processData)
+// 1초 후에 "⚙️ 데이터 처리 완료"를 resolve
+// 단, Math.random() < 0.3면 실패 (reject(new Error("데이터 처리 실패")))
+
+// 3️⃣ 데이터 저장 (saveData)
+// 2초 후에 "💾 데이터 저장 완료"를 resolve
+// 단, Math.random() < 0.1면 실패 (reject(new Error("데이터 저장 실패")))
+
+// 요구사항
+
+// 각 단계를 Promise로 구현한다.
+// 두 가지 버전으로 작성한다.
+
+// (1) .then() / .catch() 체인 버전
+// (2) async / await + try / catch 버전
+// 각 단계의 결과를 console.log()로 출력해야 한다.
+
+// 마지막에 성공 시 "✅ 모든 작업 완료!"
+// 실패 시 "❌ 작업 중 오류 발생: [오류 메시지]"를 출력한다.
+
+// async function loadData() {
+//     const load = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.2;
+//         if (success) {
+//             resolve("📦 데이터 로드 완료");
+//         } else {
+//             reject(new Error("데이터 로드 실패"));
+//         }
+//     }, 1500));
+//     return load;
+// }
+
+// async function processData() {
+//     const process = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.3;
+//         if (success) {
+//             resolve("데이터 처리 완료");
+//         } else {
+//             reject(new Error("데이터 처리 실패"));
+//         }
+//     }, 1000));
+//     return process;
+// }
+
+// async function saveData() {
+//     const save = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.1;
+//         if (success) {
+//             resolve("💾 데이터 저장 완료");
+//         } else {
+//             reject(new Error("데이터 저장 실패"));
+//         }
+//     }, 2000));
+//     return save;
+// }
+
+// try-catch
+// async function main(){
+//     try{
+//         const dataload = await loadData();
+//         console.log(dataload);
+//         const dataprocess = await processData();
+//         console.log(dataprocess);
+//         const datasave = await saveData();
+//         console.log(datasave);
+//         console.log("✅ 모든 작업 완료!");
+//     }catch(error){
+//         console.log("❌ 작업 중 오류 발생: ", error.message);
+//     }
+// }
+
+// main()
+//     .then(dataload => loadData(dataload))
+//     .then(dataprocess => processData(dataprocess))
+//     .then(datasave => saveData(datasave))
+//     .catch((error) => console.log("❌ 작업 중 오류 발생: ", error.message));
+
+// then-catch 해답
+// function main() {
+//     loadData()
+//         .then(result1 => {
+//             console.log(result1);
+//             return processData(); //다음단계 실행을 위한 리턴
+//         })
+//         .then(result2 => {
+//             console.log(result2);
+//             return saveData();
+//         })
+//         .then(result3 => {
+//             console.log(result3);
+//             console.log("✅ 모든 작업 완료!");
+//         })
+//         .catch(error => {
+//             console.log("❌ 작업 중 오류 발생:", error.message);
+//         })
+// }
+
+// .then 이후에 console.log가 바로 나오는 이유는 try-catch 문으로 보면 loadData().then은
+// 결국 const result = await loadData(); 이후에 console.log 가 나오는거랑 같기때문이다.
+// 결과적으로는 문법의 차이와 약간의 줄바꿈만 있을뿐 코드의 순차적인 모습은 같다고 볼 수 있음
+
+// .catch 에서 error => {} 방법이나 (error) => console.log(""); 방법이나 똑같다.
+// {} 블록을 쓰는건 console.log 외에 여러줄을 쓸 일이 있으면 사용하도록 한다.
+
+// {} 블록을 쓰면 return 을 사용해줘야 하지만 .catch 에서 리턴이 없는 이유는
+// 단순 출력만을 위해 사용되었기때문이며 .catch 이후로 .then 이 나오면 다음으로 넘겨줘야
+// 하기 때문에 return 을 사용해야한다.
+
+
+
+// 문제: “영화 예매 시스템 확장판”
+
+// 영화 예매 시스템에는 다음 4가지 과정이 있어 👇
+// selectMovie() – 영화 선택 (1.5초, 실패 확률 20%)
+// bookSeat() – 좌석 예약 (2초, 실패 확률 25%)
+// processPayment() – 결제 진행 (1.5초, 실패 확률 30%)
+// sendTicket() – 티켓 전송 (1초, 실패 확률 10%)
+
+// 🎯 요구사항
+// 각 함수는 Promise를 반환해야 하며, 성공 시 "✅ (단계이름) 완료", 실패 시 Error("❌ (단계이름) 실패")를 반환해야 한다.
+// selectMovie() 와 bookSeat() 은 .then() 체이닝을 이용해 순차적으로 실행해야 한다.
+// 그 다음 processPayment() 와 sendTicket() 은 async/await 으로 순차 실행해야 한다.
+// 전체 흐름은 다음 순서로 실행되어야 한다.
+
+async function selectMovie() {
+    const select = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > 0.2;
         if (success) {
-            resolve("👤 유저 데이터 불러오기 성공");
+            resolve("✅ 영화 선택 완료");
         } else {
-            reject(new Error("🚨 유저 데이터 불러오기 실패"));
+            reject(new Error("❌ 영화 선택 실패"));
         }
-    }, time));
-    return getuser;
+    }, 1500));
+    return select;
 }
 
-// try-catch 버전
+async function bookSeat() {
+    const book = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > 0.25;
+        if (success) {
+            resolve("✅ 좌석 예약 완료");
+        } else {
+            reject(new Error("❌ 좌석 예약 실패"));
+        }
+    }, 2000));
+    return book;
+}
+
+async function processPayment() {
+    const process = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > 0.3;
+        if (success) {
+            resolve("✅ 결제 진행 완료");
+        } else {
+            reject(new Error("❌ 결제 진행 실패"));
+        }
+    }, 1500));
+    return process;
+}
+
+async function sendTicket() {
+    const send = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > 0.1;
+        if (success) {
+            resolve("✅ 티켓 전송 완료");
+        } else {
+            reject(new Error("❌티켓 전송 실패"));
+        }
+    }, 1000));
+    return send;
+}
+
+// try-catch
+// async function main() {
+//     try {
+//         const result1 = await selectMovie();
+//         console.log(result1);
+//         const result2 = await bookSeat();
+//         console.log(result2);
+//         const result3 = await processPayment();
+//         console.log(result3);
+//         const result4 = await sendTicket();
+//         console.log(result4);
+//         console.log("🎬 예매가 성공적으로 완료되었습니다!");
+//     } catch (error) {
+//         console.log("🚨 예매 중 오류 발생: ", error.message);
+//     }
+// }
+
+// then-catch
+// function main() {
+//     selectMovie()
+//         .then(result1 => {
+//             console.log(result1);
+//             return bookSeat();
+//         })
+//         .then(result2 => {
+//             console.log(result2);
+//             return processPayment();
+//         })
+//         .then(result3 => {
+//             console.log(result3);
+//             return sendTicket();
+//         })
+//         .then(result4 => {
+//             console.log(result4);
+//             console.log("🎬 예매가 성공적으로 완료되었습니다!");
+//         })
+//         .catch((error) => console.log("🚨 예매 중 오류 발생: ", error.message));
+// }
+
+async function totalMovie(failRate, stateMsg, time) {
+    const total = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > failRate;
+        if (success) {
+            resolve(`✅ ${stateMsg} 완료`);
+        } else {
+            reject(new Error(`❌ ${stateMsg} 실패`));
+        }
+    }, time));
+    return total;
+}
+
+//try-catch
 async function main() {
     try {
-        const user = await getUserData(0.2, 1500);
-        console.log("유저 데이터 불러오기 성공");
+        const results = await Promise.all([
+            totalMovie(0.2, "영화 선택", 1500),
+            totalMovie(0.25, "좌석 예약", 2000),
+            totalMovie(0.3, "결제 진행", 1500),
+            totalMovie(0.1, "티켓 전송", 1000),
+        ]);
+        results.forEach((msg) => console.log(msg));
+        console.log("🎬 예매가 성공적으로 완료되었습니다!");
     } catch (error) {
-        console.log("유저 데이터 불러오기 실패", error.message);
+        console.log("🚨 예매 중 오류 발생: ", error.message);
     }
 }
 
-// then-catch 버전
-getUserData(0.2, 1500)
-    .then(msg => console.log(msg))
-    .then(console.log("유저 데이터 불러오기 성공"))
-    .catch((error) => console.log("유저데이터 불러오기 실패", error.message))
+// then-catch
+function main() {
+    totalMovie(0.2, "영화선택", 1500)
+        .then(result1 => {
+            console.log(result1);
+            return totalMovie(0.25, "좌석 예약", 2000);
+        })
+        .then(result2 => {
+            console.log(result2);
+            return totalMovie(0.3, "결제 진행", 1500);
+        })
+        .then(result3 => {
+            console.log(result3);
+            return totalMovie(0.1, "티켓 전송", 1000);
+        })
+        .then(result4 => {
+            console.log(result4);
+            console.log("🎬 예매가 성공적으로 완료되었습니다!");
+        })
+        .catch((error) => console.log("🚨 예매 중 오류 발생: ", error.message));
+}
