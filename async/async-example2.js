@@ -551,53 +551,53 @@ function fakeServer(name, failRate, time) {
 // 그 다음 processPayment() 와 sendTicket() 은 async/await 으로 순차 실행해야 한다.
 // 전체 흐름은 다음 순서로 실행되어야 한다.
 
-async function selectMovie() {
-    const select = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.2;
-        if (success) {
-            resolve("✅ 영화 선택 완료");
-        } else {
-            reject(new Error("❌ 영화 선택 실패"));
-        }
-    }, 1500));
-    return select;
-}
+// async function selectMovie() {
+//     const select = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.2;
+//         if (success) {
+//             resolve("✅ 영화 선택 완료");
+//         } else {
+//             reject(new Error("❌ 영화 선택 실패"));
+//         }
+//     }, 1500));
+//     return select;
+// }
 
-async function bookSeat() {
-    const book = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.25;
-        if (success) {
-            resolve("✅ 좌석 예약 완료");
-        } else {
-            reject(new Error("❌ 좌석 예약 실패"));
-        }
-    }, 2000));
-    return book;
-}
+// async function bookSeat() {
+//     const book = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.25;
+//         if (success) {
+//             resolve("✅ 좌석 예약 완료");
+//         } else {
+//             reject(new Error("❌ 좌석 예약 실패"));
+//         }
+//     }, 2000));
+//     return book;
+// }
 
-async function processPayment() {
-    const process = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.3;
-        if (success) {
-            resolve("✅ 결제 진행 완료");
-        } else {
-            reject(new Error("❌ 결제 진행 실패"));
-        }
-    }, 1500));
-    return process;
-}
+// async function processPayment() {
+//     const process = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.3;
+//         if (success) {
+//             resolve("✅ 결제 진행 완료");
+//         } else {
+//             reject(new Error("❌ 결제 진행 실패"));
+//         }
+//     }, 1500));
+//     return process;
+// }
 
-async function sendTicket() {
-    const send = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.1;
-        if (success) {
-            resolve("✅ 티켓 전송 완료");
-        } else {
-            reject(new Error("❌티켓 전송 실패"));
-        }
-    }, 1000));
-    return send;
-}
+// async function sendTicket() {
+//     const send = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.1;
+//         if (success) {
+//             resolve("✅ 티켓 전송 완료");
+//         } else {
+//             reject(new Error("❌티켓 전송 실패"));
+//         }
+//     }, 1000));
+//     return send;
+// }
 
 // try-catch
 // async function main() {
@@ -638,52 +638,156 @@ async function sendTicket() {
 //         .catch((error) => console.log("🚨 예매 중 오류 발생: ", error.message));
 // }
 
-async function totalMovie(failRate, stateMsg, time) {
-    const total = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > failRate;
-        if (success) {
-            resolve(`✅ ${stateMsg} 완료`);
-        } else {
-            reject(new Error(`❌ ${stateMsg} 실패`));
-        }
-    }, time));
-    return total;
-}
+// async function totalMovie(failRate, stateMsg, time) {
+//     const total = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > failRate;
+//         if (success) {
+//             resolve(`✅ ${stateMsg} 완료`);
+//         } else {
+//             reject(new Error(`❌ ${stateMsg} 실패`));
+//         }
+//     }, time));
+//     return total;
+// }
 
-//try-catch
-async function main() {
-    try {
-        const results = await Promise.all([
-            totalMovie(0.2, "영화 선택", 1500),
-            totalMovie(0.25, "좌석 예약", 2000),
-            totalMovie(0.3, "결제 진행", 1500),
-            totalMovie(0.1, "티켓 전송", 1000),
-        ]);
-        results.forEach((msg) => console.log(msg));
-        console.log("🎬 예매가 성공적으로 완료되었습니다!");
-    } catch (error) {
-        console.log("🚨 예매 중 오류 발생: ", error.message);
-    }
-}
+// 3번재사용 코드 풀이
+// async function retryMovie(failRate, stateMsg, time) {
+//     const retry = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > failRate;
+//         for (let i = 0; i < 3; i++) {
+//             if (success) {
+//                 resolve(`✅ ${stateMsg} 완료`, totalMovie());
+//                 break;
+//             } else {
+//                 reject(new Error(`🎬 ${stateMsg} 시도 중... ${i}번째)`));
+//             }
+//         }
+//     }, time));
+//     return retry;
+// }
 
-// then-catch
-function main() {
-    totalMovie(0.2, "영화선택", 1500)
-        .then(result1 => {
-            console.log(result1);
-            return totalMovie(0.25, "좌석 예약", 2000);
-        })
-        .then(result2 => {
-            console.log(result2);
-            return totalMovie(0.3, "결제 진행", 1500);
-        })
-        .then(result3 => {
-            console.log(result3);
-            return totalMovie(0.1, "티켓 전송", 1000);
-        })
-        .then(result4 => {
-            console.log(result4);
-            console.log("🎬 예매가 성공적으로 완료되었습니다!");
-        })
-        .catch((error) => console.log("🚨 예매 중 오류 발생: ", error.message));
-}
+// 3번재사용 코드 해답
+// async function retryMovie(failRate, stateMsg, time) {
+//     for (let i = 1; i <= 3; i++) {
+//         console.log(`🎬 ${stateMsg} 시도 중... (${i}번째)`);
+//         try {
+//             const result = await totalMovie(failRate, stateMsg, time);
+//             return result; // ✅ 성공 시 바로 반환
+//         } catch (error) {
+//             if (i === 3) {
+//                 // ❌ 3번 모두 실패
+//                 throw new Error(`❌ ${stateMsg} 3회 시도 실패`);
+//             }
+//         }
+//     }
+// }
+
+// //try-catch
+// async function main() {
+//     try {
+//         const results = await Promise.all([
+//             totalMovie(0.2, "영화 선택", 1500),
+//             totalMovie(0.25, "좌석 예약", 2000),
+//             totalMovie(0.3, "결제 진행", 1500),
+//             totalMovie(0.1, "티켓 전송", 1000),
+//         ]);
+//         results.forEach((msg) => console.log(msg));
+//         console.log("🎬 예매가 성공적으로 완료되었습니다!");
+//     } catch (error) {
+//         console.log("🚨 예매 중 오류 발생: ", error.message);
+//     }
+// }
+
+// // then-catch
+// function main() {
+//     totalMovie(0.2, "영화선택", 1500)
+//         .then(result1 => {
+//             console.log(result1);
+//             return totalMovie(0.25, "좌석 예약", 2000);
+//         })
+//         .then(result2 => {
+//             console.log(result2);
+//             return totalMovie(0.3, "결제 진행", 1500);
+//         })
+//         .then(result3 => {
+//             console.log(result3);
+//             return totalMovie(0.1, "티켓 전송", 1000);
+//         })
+//         .then(result4 => {
+//             console.log(result4);
+//             console.log("🎬 예매가 성공적으로 완료되었습니다!");
+//         })
+//         .catch((error) => console.log("🚨 예매 중 오류 발생: ", error.message));
+// }
+
+// 문제 설명
+
+// totalMovie(failRate, stateMsg, time) 함수를 그대로 사용해.
+
+// 3번까지 시도할 수 있게 하되,
+// 한 번 실패할 때마다 1초(1000ms) 기다린 후 재시도하도록 만들어라.
+// 3번 모두 실패하면 Error("❌ stateMsg 3회 실패")를 던져야 함.
+// 성공하면 결과(resolve값)를 반환하고 종료.
+
+//풀이문제
+// async function totalMovie(failRate, stateMsg, time) {
+//     for (let i = 0; i <= 3; i++) {
+//         console.log(`🎬 ${stateMsg} 시도 중... (${i}번째)`);
+//         const total = await new Promise((resolve, reject) => setTimeout(() => {
+//             const success = Math.random() > failRate;
+//             if (success) {
+//                 resolve(`✅ ${stateMsg} 완료`);
+//                 return total;
+//             } else {
+//                 reject(new Error(`❌ ${stateMsg} 3회 실패!`));
+//             }
+//         }, time));
+//     }
+// }
+
+//해답문제
+// async function totalMovie(failRate, stateMsg, time) {
+//     for (let i = 0; i <= 3; i++) {
+//         console.log(`🎬 ${stateMsg} 시도 중... (${i}번째)`);
+
+//         try {
+//             const total = await new Promise((resolve, reject) => setTimeout(() => {
+//                 const success = Math.random() > failRate;
+//                 if (success) {
+//                     resolve(`${stateMsg} 성공!`);
+//                 } else {
+//                     reject(new Error(`${stateMsg} 실패!`));
+//                 }
+//             }, time));
+
+//             return total;
+
+//         } catch (error) {
+//             if (i < 3) {
+//                 console.log(`❌ ${stateMsg} 실패! 재시도 대기중...`);
+//                 await new Promise(resolve => setTimeout(resolve, 1000));
+//             } else {
+//                 console.log(`❌ ${stateMsg} 3회 실패`);
+//             }
+//         }
+//     }
+// }
+
+// async function main() {
+//     try {
+//         const result = await totalMovie(0.3, "결제 진행", 1000);
+//         console.log(result);
+//     } catch (error) {
+//         console.log("🚨 최종 오류:", error.message);
+//     }
+// }
+
+// async function main() {
+//     try {
+//         const result1 = await totalMovie(0.3, "결제 진행", 1000);
+//         console.log(result1);
+//     } catch (error) {
+//         console.log(`🎬${totalMovie.stateMsg} 실패! 재시도 대기중...`);
+//     }
+// }
+
