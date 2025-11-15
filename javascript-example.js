@@ -373,31 +373,196 @@
 // 반드시 async/await + try/catch + 반복문(for 또는 while) 포함
 // return 또는 throw 를 적절히 활용해 흐름 제어
 
-async function uploadFile() {
-    const upload = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.3;
+// async function uploadFile() {
+//     const upload = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.3;
+//         if (success) {
+//             resolve("📁 업로드 성공!");
+//         } else {
+//             reject(new Error("❌ 업로드 실패"));
+//         }
+//     }, 1000));
+//     return upload;
+// }
+
+// async function main() {
+//     for (let i = 0; i < 4; i++) {
+//         console.log(`📤 업로드 시도 중... (${i + 1}번째)`)
+//         try {
+//             const result = await uploadFile();
+//             console.log(result);
+//             console.log("🎉 업로드 완료!");
+//             return;
+//         } catch (error) {
+//             console.log(`⛔ 업로드 실패 (${i + 1}번째 시도)`, error.message);
+//             if (i === 3) {
+//                 console.log("🚫 업로드 4회 실패 — 작업 중단");
+//             }
+//         }
+//     }
+// }
+
+
+// 어떤 프로그램이 자동으로 백업을 진행해야 한다.
+// 백업 과정은 다음 3단계로 이루어진다:
+
+// 파일 스캔(scanFiles)
+// 압축(compressFiles)
+// 업로드(uploadBackup)
+
+// 모든 단계는 실패할 수 있고, 실패하면 정해진 규칙대로 재시도해야 한다.
+
+// 📌 규칙
+// ✔ Step 1) scanFiles()
+// 70% 확률로 성공
+// 실패 시 최대 2회까지 재시도
+// 2회 모두 실패하면 작업 전체 중단
+
+// ✔ Step 2) compressFiles()
+// 60% 확률로 성공
+// 실패하면:
+// “⚠️ 압축 실패… 재시도합니다” 출력 후
+// 3초 대기
+// 최대 3회까지 재시도
+// 3회 모두 실패하면 작업 전체 중단
+
+// ✔ Step 3) uploadBackup()
+// 50% 확률로 성공
+// 실패 시 즉시 throw 해서 main에서 catch 처리
+// 단, 실패 시 다시 시도하지 않음 (1회 실패 → 작업 종료)
+
+// async function scanFiles() {
+//     for (let i = 0; i < 2; i++) {
+//         console.log("스캔중...");
+//         try {
+//             const scan = await new Promise((resolve, reject) => setTimeout(() => {
+//                 const success = Math.random() > 0.3;
+//                 if (success) {
+//                     resolve("✅ 스캔완료");
+//                 } else {
+//                     reject(new Error("❌스캔 실패"));
+//                 }
+//             }, 1000));
+//             return scan;
+//         } catch (error) {
+//             console.log("스캔 다시 시도중...");
+//             if (i == 1) {
+//                 console.log("⛔ 스캔 전체실패... 작업을 종료합니다");
+//                 throw error;
+//             }
+//         }
+//     }
+// }
+
+// async function compressFiles() {
+//     for (let i = 0; i < 3; i++) {
+//         console.log("파일 압축중...");
+//         try {
+//             const compress = await new Promise((resolve, reject) => setTimeout(() => {
+//                 const success = Math.random() > 0.4;
+//                 if (success) {
+//                     resolve("✅ 파일 압축 완료");
+//                 } else {
+//                     reject(new Error("❌ 파일 압축 실패"));
+//                 }
+//             }, 1000));
+//             return compress;
+//         } catch (error) {
+//             console.log("⚠️ 압축 실패… 재시도합니다");
+//             await new Promise(resolve => setTimeout(resolve, 3000));
+//             if (i == 2) {
+//                 console.log("⛔ 압축 3회 실패... 작업을 종료합니다");
+//                 throw error;
+//             }
+//         }
+//     }
+// }
+
+// async function uploadBackup() {
+//     const upload = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.5;
+//         if (success) {
+//             resolve("✅업로드 성공!");
+//         } else {
+//             reject(new Error("❌업로드 실패!"));
+//         }
+//     }, 1000));
+//     return upload;
+// }
+
+// async function main() {
+//     try {
+//         const result1 = await scanFiles();
+//         console.log(result1);
+//         const result2 = await compressFiles();
+//         console.log(result2);
+//         const result3 = await uploadBackup();
+//         console.log(result3);
+//         console.log("🎉 백업이 성공적으로 완료되었습니다!");
+//     } catch (error) {
+//         console.log("⛔ 백업 실패 — 작업을 종료합니다.");
+//     }
+// }
+
+
+// “3개의 서버 중 가장 빠른 응답 선택하기”
+
+// 서버 3곳에서 같은 데이터를 요청한다고 해보자.
+// 각 서버는 랜덤한 시간(0.3~1.2초) 안에 응답하며,
+// 응답 속도가 가장 빠른 서버의 결과만 사용하고 나머지는 무시한다.
+
+// 🎯 요구사항
+// 1) requestToServer(name) 함수 만들기
+// name은 "A", "B", "C" 중 하나
+// 300~1200ms 랜덤 딜레이
+// 20% 확률로 실패 (에러 throw)
+
+// 성공 시:
+// "서버 ${name} 응답 완료!" 문자열 resolve
+
+// 실패 시:
+// throw new Error("서버 ${name} 에러!")
+
+// 2) getFastestResponse() 함수 만들기
+// 서버 A, B, C에 동시에 요청을 보낸다.
+// 가장 먼저 성공한 결과를 리턴한다.
+// ⚠ 단, 첫 성공 이전에 발생한 실패는 무시한다.
+
+// 아래처럼 자주사용하면 함수로 만들어서 써도됨
+// function randIntInclusive(min, max) {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+//   }
+//   // 사용
+//   const time = randIntInclusive(800, 1300);
+
+
+async function requestToServer(name) {
+    // (1300 - 800 + 1) 은 1300~800 사이에 있는 정수들의 범위폭 즉 501개
+    // Math.floor은 소수점을 없앤 정수들만 표현
+    // +800 은 간단하게 보면 800을 포함한 숫자부터 시작하도록 함
+    // 즉 800부터 시작해서 501개의 정수니까 800이상 1300이하의 숫자를 도출함
+    const time = Math.floor(Math.random() * (1300 - 800 + 1)) + 800;
+
+    const request = await new Promise((resolve, reject) => setTimeout(() => {
+        const success = Math.random() > 0.2;
         if (success) {
-            resolve("📁 업로드 성공!");
+            resolve(`서버 ${name} 응답 완료!`);
         } else {
-            reject(new Error("❌ 업로드 실패"));
+            reject(new Error(`서버 ${name} 에러!`));
         }
-    }, 1000));
-    return upload;
+    }, time));
+    return request;
 }
 
-async function main() {
-    for (let i = 0; i < 4; i++) {
-        console.log(`📤 업로드 시도 중... (${i + 1}번째)`)
-        try {
-            const result = await uploadFile();
-            console.log(result);
-            console.log("🎉 업로드 완료!");
-            return;
-        } catch (error) {
-            console.log(`⛔ 업로드 실패 (${i + 1}번째 시도)`, error.message);
-            if (i === 3) {
-                console.log("🚫 업로드 4회 실패 — 작업 중단");
-            }
-        }
+async function getFastestResponse() {
+    try {
+        const results = await new Promise.any([
+            requestToServer("A서버"),
+            requestToServer("B서버"),
+            requestToServer("C서버"),
+        ]);
+        console.log(`${results.name} 응답완료! (가장 빠른 서버)`);
+    } catch (errors) {
+        console.log("🚫 모든 서버 응답 실패", errors.message);
     }
 }
