@@ -662,7 +662,7 @@
 //             serverData("C서버"),
 //         ]);
 //         console.log(`🔥 가장 빠른 서버: ${result.name} 응답 완료 (${result.time} ms)`);
-//     } catch (error) {   
+//     } catch (error) {
 //         console.log("🚫 모든 서버 응답 실패", error.message);
 //     }
 // }
@@ -688,40 +688,40 @@
 // B서버: 실패 (910ms)
 // C서버: 실패 (1020ms)
 
-async function fetchServerData(name) {
-    const time = Math.floor(Math.random() * (1500 - 500 + 1)) + 500;
-    const fetch = await new Promise((resolve, reject) => setTimeout(() => {
-        const success = Math.random() > 0.2;
-        if (success) {
-            resolve({
-                name,
-                time,
-                message: `${name} 응답 완료!`,
-            });
-        } else {
-            reject({
-                name,
-                time,
-                message: `${name} 응답 실패!`,
-            });
-        }
-    }, time));
-    return fetch;
-}
+// async function fetchServerData(name) {
+//     const time = Math.floor(Math.random() * (1500 - 500 + 1)) + 500;
+//     const fetch = await new Promise((resolve, reject) => setTimeout(() => {
+//         const success = Math.random() > 0.2;
+//         if (success) {
+//             resolve({
+//                 name,
+//                 time,
+//                 message: `${name} 응답 완료!`,
+//             });
+//         } else {
+//             reject({
+//                 name,
+//                 time,
+//                 message: `${name} 응답 실패!`,
+//             });
+//         }
+//     }, time));
+//     return fetch;
+// }
 
-async function main() {
-    try {
-        const result = await new Promise.any([
-            fetchServerData("A서버"),
-            fetchServerData("B서버"),
-            fetchServerData("C서버"),
-        ]);
-        console.log(result.message);
-        console.log(`🔥 가장 빠른 서버: ${result.name} 응답 완료! (${result.time}ms)`);
-    } catch (error) {
-        console.log("🚫 모든 서버 응답 실패");
-        // error.errors 는 Promise에서 reject 한 값들이 들어있는 배열.
-        // 그러므로 error.errors.forEach 는 그 배열을 각각 다 출력.
-        error.errors.forEach(e => console.log(`${e.name}: 실패 (${e.time}ms)`));
-    }
-}
+// async function main() {
+//     try {
+//         const result = await new Promise.any([
+//             fetchServerData("A서버"),
+//             fetchServerData("B서버"),
+//             fetchServerData("C서버"),
+//         ]);
+//         console.log(result.message);
+//         console.log(`🔥 가장 빠른 서버: ${result.name} 응답 완료! (${result.time}ms)`);
+//     } catch (error) {
+//         console.log("🚫 모든 서버 응답 실패");
+//         // error.errors 는 Promise에서 reject 한 값들이 들어있는 배열.
+//         // 그러므로 error.errors.forEach 는 그 배열을 각각 다 출력.
+//         error.errors.forEach(e => console.log(`${e.name}: 실패 (${e.time}ms)`));
+//     }
+// }
