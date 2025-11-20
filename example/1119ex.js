@@ -123,7 +123,7 @@
 
 // 문제
 // 온라인 쇼핑몰에서 재고를 관리하는 시스템을 만든다고 가정하자.
-// 다음 products 배열을 기반으로 여러 작업을 순차/병렬로 처리해야 한다.    
+// 다음 products 배열을 기반으로 여러 작업을 순차/병렬로 처리해야 한다.
 
 // 1) checkStock(product)
 // 재고가 1개 이상이면 resolve, 아니면 reject 하는 Promise 함수를 만들어라.
@@ -150,56 +150,56 @@
 // 이름만 모은 배열을 reduce로 아래 형태로 변환하라:
 // "판매 가능한 제품: 모니터, 마우스, 스피커"
 
-async function checkStock(product) {
-    const time = Math.floor(Math.random() * (800 - 500 + 1)) + 500;
-    const check = await new Promise((resolve, reject) => setTimeout(() => {
-        if (product.stock >= 1) {
-            resolve({
-                id: product.id,
-                name: product.name,
-                status: "Ok",
-            });
-        } else {
-            reject({
-                id: product.id,
-                name: product.name,
-                status: "Out",
-            });
-        }
-    }, time));
-    return check;
-}
+// async function checkStock(product) {
+//     const time = Math.floor(Math.random() * (800 - 500 + 1)) + 500;
+//     const check = await new Promise((resolve, reject) => setTimeout(() => {
+//         if (product.stock >= 1) {
+//             resolve({
+//                 id: product.id,
+//                 name: product.name,
+//                 status: "Ok",
+//             });
+//         } else {
+//             reject({
+//                 id: product.id,
+//                 name: product.name,
+//                 status: "Out",
+//             });
+//         }
+//     }, time));
+//     return check;
+// }
 
-async function main() {
-    const products = [
-        { id: 1, name: "모니터", stock: 3 },
-        { id: 2, name: "키보드", stock: 0 },
-        { id: 3, name: "마우스", stock: 5 },
-        { id: 4, name: "스피커", stock: 1 },
-        { id: 5, name: "헤드셋", stock: 0 }
-    ];
+// async function main() {
+//     const products = [
+//         { id: 1, name: "모니터", stock: 3 },
+//         { id: 2, name: "키보드", stock: 0 },
+//         { id: 3, name: "마우스", stock: 5 },
+//         { id: 4, name: "스피커", stock: 1 },
+//         { id: 5, name: "헤드셋", stock: 0 }
+//     ];
 
-    const concurrency = 2;
-    const successList = [];
-    const failList = [];
+//     const concurrency = 2;
+//     const successList = [];
+//     const failList = [];
 
-    for (let i = 0; i < products.length; i += concurrency) {
-        const chunk = products.slice(i, i + concurrency);
-        const promises = chunk.map((product =>
-            checkStock(product)
-                .then(res => successList.push(res))
-                .catch(err => failList.push(err))
-        ));
-        await Promise.all(promises);
-    }
+//     for (let i = 0; i < products.length; i += concurrency) {
+//         const chunk = products.slice(i, i + concurrency);
+//         const promises = chunk.map((product =>
+//             checkStock(product)
+//                 .then(res => successList.push(res))
+//                 .catch(err => failList.push(err))
+//         ));
+//         await Promise.all(promises);
+//     }
 
-    console.log("=== 재고 있음 ===");
-    successList.forEach(p => console.log(`[${p.id}] ${p.name}: ${p.status}`));
+//     console.log("=== 재고 있음 ===");
+//     successList.forEach(p => console.log(`[${p.id}] ${p.name}: ${p.status}`));
 
-    console.log("");
+//     console.log("");
 
-    console.log("=== 재고 없음 ===");
-    failList.forEach(e => console.log(`[${e.id}] ${e.name}: ${e.status}`));
+//     console.log("=== 재고 없음 ===");
+//     failList.forEach(e => console.log(`[${e.id}] ${e.name}: ${e.status}`));
 
-    successList.reduce(r => console.log(`판매 가능한 제품: ${r.name}`));
-}
+//     successList.reduce(r => console.log(`판매 가능한 제품: ${r.name}`));
+// }
