@@ -214,8 +214,6 @@ class CancelableAsyncQueue {
     cancel() {
         if (this.#canceled) return;
         this.#canceled = true;
-
-
     }
 
     run() {
